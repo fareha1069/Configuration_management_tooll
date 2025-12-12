@@ -1,0 +1,8 @@
+flask
+marshmallow
+flask_sqlalchemy
+flask_migrate
+flask_talisman
+gunicorn
+alembic
+psycopg2-binary
