@@ -31,3 +31,4 @@ time.sleep(2)
 print("Current URL after click:", driver.current_url)
 
 driver.quit()
+print("hello")
