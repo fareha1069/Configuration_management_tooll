@@ -4,6 +4,7 @@ pipeline {
     environment {
         // Define environment variables
         PYTHON_ENV = "venv"
+        PYTHON_PATH = "C:\Users\MT\AppData\Local\Programs\Python\Python311\python.exe"
     }
 
     options {
@@ -31,9 +32,9 @@ pipeline {
             steps {
                 // Create virtual environment and install dependencies
                 bat """
-                python -m venv %PYTHON_ENV%
+                PYTHON_PATH -m venv %PYTHON_ENV%
                 call %PYTHON_ENV%\\Scripts\\activate.bat
-                python -m pip install --upgrade pip
+                PYTHON_PATH -m pip install --upgrade pip
                 pip install -r Backend\\requirements.txt || exit 0
                 """
             }
