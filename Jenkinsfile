@@ -4,6 +4,8 @@ pipeline {
     environment {
         // Define environment variables
         PYTHON_ENV = "venv"
+        PYTHON_HOME = "C:\Users\MT\AppData\Local\Programs\Python\Python311\python.exe"  // Set the path to your Python installation (adjust this path)
+        PATH = "${PYTHON_HOME};${env.PATH}"  // Prepend Python path to system PATH
     }
 
     options {
@@ -59,7 +61,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 bat """
-                kubectl apply -f k8s_deployment\\
+                kubectl apply -f k8s_deployment
                 """
             }
         }
