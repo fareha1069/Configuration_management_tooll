@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        // Define any environment variables you need
+        // Define environment variables
         PYTHON_ENV = "venv"
     }
 
@@ -29,38 +29,38 @@ pipeline {
 
         stage('Setup Python Environment') {
             steps {
-                // Install dependencies
-                sh '''
-                python3 -m venv $PYTHON_ENV
-                source $PYTHON_ENV/bin/activate
-                pip install --upgrade pip
-                pip install -r Backend/requirements.txt || true
-                '''
+                // Create virtual environment and install dependencies
+                bat """
+                python -m venv %PYTHON_ENV%
+                call %PYTHON_ENV%\\Scripts\\activate.bat
+                python -m pip install --upgrade pip
+                pip install -r Backend\\requirements.txt || exit 0
+                """
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh '''
-                source $PYTHON_ENV/bin/activate
+                bat """
+                call %PYTHON_ENV%\\Scripts\\activate.bat
                 pytest tests
-                '''
+                """
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh '''
+                bat """
                 docker build -t myapp:latest .
-                '''
+                """
             }
         }
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh '''
-                kubectl apply -f k8s_deployment/
-                '''
+                bat """
+                kubectl apply -f k8s_deployment\\
+                """
             }
         }
     }
