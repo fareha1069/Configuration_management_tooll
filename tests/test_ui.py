@@ -8,15 +8,9 @@ from webdriver_manager.chrome import ChromeDriverManager
 import time
 import os
 
-# =========================
-# CONFIG
-# =========================
 APP_URL = os.getenv("APP_URL", "http://localhost:3000")
-WAIT_TIME = 40  # CI is slow
+WAIT_TIME = 40  
 
-# =========================
-# CHROME OPTIONS (CI SAFE)
-# =========================
 options = Options()
 options.add_argument("--headless=new")           # REQUIRED for Jenkins
 options.add_argument("--no-sandbox")
@@ -24,19 +18,16 @@ options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--window-size=1920,1080")
 options.add_argument("--disable-gpu")
 
-# =========================
-# DRIVER SETUP
-# =========================
 service = Service(ChromeDriverManager().install())
 driver = webdriver.Chrome(service=service, options=options)
 
 try:
-    print("🚀 Opening app:", APP_URL)
+    print(" Opening app:", APP_URL)
     driver.get(APP_URL)
 
     wait = WebDriverWait(driver, WAIT_TIME)
 
-    print("⏳ Waiting for 'Get Started' button...")
+    print(" Waiting for 'Get Started' button...")
 
     get_started_btn = wait.until(
         EC.presence_of_element_located(
@@ -49,16 +40,16 @@ try:
     time.sleep(1)
     driver.execute_script("arguments[0].click();", get_started_btn)
 
-    print("✅ 'Get Started' button clicked")
+    print(" 'Get Started' button clicked")
 
     time.sleep(2)
-    print("🌍 Current URL:", driver.current_url)
+    print(" Current URL:", driver.current_url)
 
 except Exception as e:
-    print("❌ Test failed:", str(e))
+    print(" Test failed:", str(e))
     driver.save_screenshot("ui_test_failure.png")
     raise
 
 finally:
     driver.quit()
-    print("🧹 Browser closed")
+    print(" Browser closed")
