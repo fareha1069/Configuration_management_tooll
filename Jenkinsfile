@@ -6,7 +6,6 @@ pipeline {
         PYTHON_HOME = "C:\\Users\\MT\\AppData\\Local\\Programs\\Python\\Python311"
         PATH = "${PYTHON_HOME};${env.PATH}"
 
-        // Flask settings for tests
         FLASK_ENV = "testing"
         FLASK_APP = "Backend"
         DATABASE_URL = "sqlite:///:memory:"
@@ -35,11 +34,11 @@ pipeline {
             steps {
                 bat """
                 python --version
-                python -m venv %PYTHON_ENV%
-                call %PYTHON_ENV%\\Scripts\\activate.bat
 
-                python -m pip install --upgrade pip
-                pip install -r Backend\\requirements.txt
+                python -m venv %PYTHON_ENV%
+
+                %PYTHON_ENV%\\Scripts\\python.exe -m pip install --upgrade pip
+                %PYTHON_ENV%\\Scripts\\pip.exe install -r Backend\\requirements.txt
                 """
             }
         }
@@ -47,10 +46,7 @@ pipeline {
         stage('Start Application (for UI Tests)') {
             steps {
                 bat """
-                call %PYTHON_ENV%\\Scripts\\activate.bat
-
-                set FLASK_RUN_PORT=5000
-                start /B flask run --host=0.0.0.0 --port=5000
+                start /B %PYTHON_ENV%\\Scripts\\python.exe -m flask run --host=0.0.0.0 --port=5000
                 timeout /T 10
                 """
             }
@@ -59,8 +55,7 @@ pipeline {
         stage('Run Tests (Unit + API + UI)') {
             steps {
                 bat """
-                call %PYTHON_ENV%\\Scripts\\activate.bat
-                pytest tests -v
+                %PYTHON_ENV%\\Scripts\\python.exe -m pytest tests -v
                 """
             }
         }
