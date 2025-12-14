@@ -7,7 +7,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f4f6f8; /* Light grey background */
-  /*color: #333; /* Dark grey text */
+  color: #333; /* Dark grey text */
 }
 
 /* Remove the max-width restriction from Material-UI containers */
