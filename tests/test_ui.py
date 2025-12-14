@@ -1,34 +1,64 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 import time
+import os
 
-# Setup
+# =========================
+# CONFIG
+# =========================
+APP_URL = os.getenv("APP_URL", "http://localhost:3000")
+WAIT_TIME = 40  # CI is slow
+
+# =========================
+# CHROME OPTIONS (CI SAFE)
+# =========================
+options = Options()
+options.add_argument("--headless=new")           # REQUIRED for Jenkins
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--window-size=1920,1080")
+options.add_argument("--disable-gpu")
+
+# =========================
+# DRIVER SETUP
+# =========================
 service = Service(ChromeDriverManager().install())
-driver = webdriver.Chrome(service=service)
-driver.get("http://localhost:3000/")  # React frontend URL
-driver.maximize_window()
+driver = webdriver.Chrome(service=service, options=options)
 
-wait = WebDriverWait(driver, 20)
+try:
+    print("🚀 Opening app:", APP_URL)
+    driver.get(APP_URL)
 
-# Locate button
-get_started_btn = wait.until(
-    EC.presence_of_element_located((By.XPATH, "//button[.//span[text()='Get Started']]"))
-)
+    wait = WebDriverWait(driver, WAIT_TIME)
 
-# Scroll into view and click using JS
-driver.execute_script("arguments[0].scrollIntoView(true);", get_started_btn)
-time.sleep(0.5)
-driver.execute_script("arguments[0].click();", get_started_btn)
+    print("⏳ Waiting for 'Get Started' button...")
 
-print("✅ 'Get Started' button clicked!")
+    get_started_btn = wait.until(
+        EC.presence_of_element_located(
+            (By.XPATH, "//button[.//span[normalize-space()='Get Started']]")
+        )
+    )
 
-# Wait to see navigation
-time.sleep(2)
-print("Current URL after click:", driver.current_url)
+    # Scroll + click safely
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", get_started_btn)
+    time.sleep(1)
+    driver.execute_script("arguments[0].click();", get_started_btn)
 
-driver.quit()
-print("hello")
+    print("✅ 'Get Started' button clicked")
+
+    time.sleep(2)
+    print("🌍 Current URL:", driver.current_url)
+
+except Exception as e:
+    print("❌ Test failed:", str(e))
+    driver.save_screenshot("ui_test_failure.png")
+    raise
+
+finally:
+    driver.quit()
+    print("🧹 Browser closed")
