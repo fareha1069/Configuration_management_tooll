@@ -1,11 +1,6 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\Frontend",
-    "\\Frontend\\bridge-ui",
-    "\\Frontend\\bridge-ui\\src",
-    "\\Frontend\\bridge-ui\\src\\api"
+    ""
   ],
-  "SelectedNode": "\\Frontend\\bridge-ui\\src\\api\\index.js",
   "PreviewInSolutionExplorer": false
 }

@@ -9,3 +9,4 @@ psycopg2-binary
 pytest
 selenium
 webdriver-manager
+flask-testing
